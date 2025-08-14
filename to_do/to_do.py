@@ -1,14 +1,23 @@
-from datetime import date
+from datetime import datetime
+import os
+import json
 
 tareas = []
 seguir = True
+
+if os.path.exists("file.json"):
+    with open("file.json", "r") as f:
+        tareas = json.load(f)
+else:
+    with open("file.json", "w") as f:
+        json.dump([], f)
 
 def añadir_actividad():
     ok = False
     while not ok:
         id = input("Seleccione un id: ")
         descripcion = input("Escriba una breve descripción: ")
-        fecha = date.today().strftime("%d/%m/%Y")
+        fecha = datetime.now().strftime("%d/%m a las %H:%M")
         
         if any(t["id"] == id for t in tareas):
             print("El id ya existe, prueba con otro")
@@ -32,13 +41,19 @@ def mostrar_actividades():
     else:
         for tarea in tareas:
             print(f"ID: {tarea['id']} | Descripción: {tarea['descripcion']} | Fecha: {tarea['fecha']}")
+            
+def guardar():
+    with open("file.json", "w") as f:
+        json.dump(tareas, f, indent=4)
+    print("Actividades guardadas correctamente.")
 
 while seguir:
     print("\nBienvenido a tu gestor de actividades")
     print("1) Añadir actividad")
     print("2) Borrar actividad")
     print("3) Mostrar actividades")
-    print("4) Salir")
+    print("4) Guardar")
+    print("5) Salir")
     
     menu = input("Elige una opción: ")
 
@@ -50,6 +65,8 @@ while seguir:
         case "3":
             mostrar_actividades()
         case "4":
+            guardar()
+        case "5":
             seguir = False
             print("Saliendo...")
         case _:
